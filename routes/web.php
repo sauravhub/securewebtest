@@ -1,4 +1,5 @@
 <?php
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -9,23 +10,21 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
 Route::get('/', function () {
     return view('welcome');
 });
+
 Auth::routes();
-Route::get('/home', 'ProductController@store');
-  Route::prefix('admin')->group(function() {
-    Route::get('/login', 'Auth\AdminLoginController@showLoginForm')->name('admin.login');
-    Route::post('/login', 'Auth\AdminLoginController@login')->name('admin.login.submit');
 
+Route::get('/home', 'HomeController@index')->name('home');
 
-     Route::post('/logout', 'Auth\AdminLoginController@logout')->name('admin.logout');
-     Route::get('/register', 'Auth\RegistersController@create')->name('admin.register');
-     Route::post('/register', 'Auth\RegistersController@create')->name('admin.register');
-     Route::get('/', 'AdminController@index')->name('admin.dashboard');
-
-     Route::post('/store', 'AdminController@store')->name('admin.store');
-    // RRoute::get('/view-hr-requests', 'HrRequestController@index');
-
-
-  });
+Route::group(['prefix' => 'chat',  'middleware' => ['auth']], function() {
+	Route::get('/', 'ChatsController@index')->name('chatindex');
+	Route::get('/messages/{reciever}', 'ChatsController@fetchMessages');
+	Route::get('/currentUserId', 'ChatsController@getCurrntuserdata');
+	Route::get('/users', 'ChatsController@fetchusers');
+	Route::get('/chattedusers', 'ChatsController@fetchchattingusers');
+	Route::post('/messages', 'ChatsController@sendMessage');
+	Route::post('/attachments', 'ChatsController@messageAttachments');
+});
